@@ -75,4 +75,14 @@ router.post("/join/:eventId", authMiddleware, async (req, res) => {
   }
 });
 
+//Get My Events (Only Events Created by Logged-in User)
+router.get("/my-events", authMiddleware, async (req, res) => {
+  try {
+    const myEvents = await Event.find({ createdBy: req.user.id }).populate("createdBy", "name email");
+    res.json(myEvents);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user events", error });
+  }
+});
+
 module.exports = router;
