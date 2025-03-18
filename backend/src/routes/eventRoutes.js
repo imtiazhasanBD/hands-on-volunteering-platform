@@ -1,6 +1,8 @@
 const express = require("express");
 const Event = require("../models/Event");
 const authMiddleware = require("../middleware/authMiddleware"); 
+const { getEventsByAttendee } = require("../controllers/eventController");
+
 
 const router = express.Router();
 
@@ -84,5 +86,8 @@ router.get("/my-events", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error fetching user events", error });
   }
 });
+
+router.get("/attended-events", authMiddleware, getEventsByAttendee);
+
 
 module.exports = router;

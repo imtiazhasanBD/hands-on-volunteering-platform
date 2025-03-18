@@ -75,4 +75,22 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
+// Update User Profile
+router.put("/me", authMiddleware, async (req, res) => {
+  try {
+    const { name, skills, causes } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, skills, causes },
+      { new: true }
+    ).select("-password");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile", error });
+  }
+});
+
 module.exports = router;

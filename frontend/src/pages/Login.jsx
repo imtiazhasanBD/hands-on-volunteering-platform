@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -41,6 +42,9 @@ export default function AuthPage() {
 
       const response = await axios.post(url, formattedData);
       console.log(response.data);
+      if (response.data.message) {
+        toast.success(response.data?.message);
+      }
 
       if (response.data?.token) {
         localStorage.setItem("token", response.data.token);
