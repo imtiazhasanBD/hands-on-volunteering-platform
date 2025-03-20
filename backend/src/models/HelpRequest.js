@@ -11,6 +11,7 @@ const helpRequestSchema = new mongoose.Schema({
   comments: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      userName: { type: String },
       message: String,
       createdAt: { type: Date, default: Date.now },
     },

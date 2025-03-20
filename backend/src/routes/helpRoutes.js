@@ -1,6 +1,7 @@
 const express = require("express");
 const HelpRequest = require("../models/HelpRequest");
 const authMiddleware = require("../middleware/authMiddleware");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -46,9 +47,23 @@ router.post("/offer/:requestId", authMiddleware, async (req, res) => {
     const { message } = req.body;
     const request = await HelpRequest.findById(req.params.requestId);
 
-    if (!request) return res.status(404).json({ message: "Help request not found" });
+    if (!request) {
+      return res.status(404).json({ message: "Help request not found" });
+    }
 
-    request.comments.push({ user: req.user.id, message });
+    // Fetch the user's details (e.g., name) from the database
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Add the comment with the user's name and ID
+    request.comments.push({
+      user: req.user.id,
+      userName: user.name, // Include the user's name
+      message,
+    });
+
     await request.save();
     res.json({ message: "Help offer posted successfully", request });
   } catch (error) {
