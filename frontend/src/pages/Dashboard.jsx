@@ -7,9 +7,10 @@ import { getProfile, getUserJoinedEvents, getVolunteerHistory, updateProfile } f
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
+  const { user, setUser, token, loading } = useAuth();
   const [editing, setEditing] = useState(false);
   const [isFormChanged, setIsFormChanged] = useState(false);
   const [volunteerHistory, setVolunteerHistory] = useState([]);
@@ -18,32 +19,29 @@ export default function ProfilePage() {
     skills: "",
     causes: "",
   });
-  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    if (token) {
-      getProfile(token)
-        .then((data) => {
-          setUser(data);
-          setFormData({
-            name: data.name || "",
-            skills: data.skills || "",
-            causes: data.causes || "",
-          });
-        })
-        .catch((error) => console.error("Error fetching profile:", error));
-    }
-  }, []);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setIsFormChanged(true);
   };
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        skills: user.skills ? user.skills.join(", ") : "",
+        causes: user.causes ? user.causes.join(", ") : "",
+      });
+    }
+  }, [user]); 
+
+  
   const handleSave = async () => {
     try {
       const updatedUser = await updateProfile(token, formData);
-      setUser(updatedUser);
+      setUser(updatedUser); // Update the global user state
       setEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -65,7 +63,7 @@ export default function ProfilePage() {
     }
   }, []);
 
-  if (!user) return <p className="text-center">Loading...</p>;
+  if (!user || loading) return <p className="text-center">Loading...</p>;
 
   // Separate upcoming and past activities
   const currentDate = new Date();

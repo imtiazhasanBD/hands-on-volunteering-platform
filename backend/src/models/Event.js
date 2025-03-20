@@ -8,6 +8,7 @@ const eventSchema = new mongoose.Schema({
   location: { type: String, required: true },
   category: { type: String, required: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  capacity: { type: Number, required: true },
   attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 

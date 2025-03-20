@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -18,6 +19,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { loginUser } = useAuth(); // ✅ Use Auth Context
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +35,6 @@ export default function AuthPage() {
         ? "http://localhost:5000/api/auth/login"
         : "http://localhost:5000/api/auth/register";
 
-      // Convert skills & causes from comma-separated string to an array
       const formattedData = {
         ...formData,
         skills: formData.skills.split(",").map((skill) => skill.trim()),
@@ -41,23 +42,24 @@ export default function AuthPage() {
       };
 
       const response = await axios.post(url, formattedData);
-      console.log(response.data);
-      if (response.data.message) {
-        toast.success(response.data?.message);
-      }
+
+      toast.success(response.data?.message || "Success!");
 
       if (response.data?.token) {
-        localStorage.setItem("token", response.data.token);
+        loginUser(response.data.token); // ✅ Update Auth Context
         navigate("/");
       }
     } catch (err) {
+      console.error("Auth error:", err);
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex flex-col gap-6 justify-center items-center h-screen bg-gray-100">
+      <h1 className="text-lg md:text-2xl font-semibold text-gray-600 text-center">Join HandsOn – Empower Communities Through Volunteering!</h1>
       <Card className="w-96">
         <CardHeader>
           <CardTitle>{isLogin ? "Login" : "Sign Up"}</CardTitle>
@@ -71,6 +73,7 @@ export default function AuthPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             )}
             <Input
@@ -80,6 +83,7 @@ export default function AuthPage() {
               value={formData.email}
               onChange={handleChange}
               required
+              disabled={loading}
             />
             <Input
               name="password"
@@ -88,6 +92,7 @@ export default function AuthPage() {
               value={formData.password}
               onChange={handleChange}
               required
+              disabled={loading}
             />
             {!isLogin && (
               <>
@@ -97,6 +102,7 @@ export default function AuthPage() {
                   value={formData.skills}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                 />
                 <Input
                   name="causes"
@@ -104,6 +110,7 @@ export default function AuthPage() {
                   value={formData.causes}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                 />
               </>
             )}
