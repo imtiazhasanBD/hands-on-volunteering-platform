@@ -10,11 +10,13 @@ import Layout from "./components/Layout";
 import { AuthProvider } from "./context/AuthContext";
 import CreateEvent from "./pages/CreateEvent";
 import PostHelpRequest from "./pages/PostHelpRequest";
+import HelmetComponent from "./components/HelmetComponent";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <HelmetComponent/>
         <Routes>
           <Route path="/login" element={<Login />} />
           {/* Protected Routes */}
