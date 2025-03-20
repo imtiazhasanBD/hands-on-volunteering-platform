@@ -6,6 +6,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/u
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { createHelpRequest } from "@/utils/api";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function PostHelpRequest() {
   const { token } = useAuth();
@@ -34,6 +35,10 @@ export default function PostHelpRequest() {
     }
     setLoading(false);
   };
+
+  if (loading) {
+    return <LoadingScreen/>
+  }
 
   return (
     <div className="max-w-2xl mx-auto mt-20 p-4 bg-white shadow-lg rounded-lg">

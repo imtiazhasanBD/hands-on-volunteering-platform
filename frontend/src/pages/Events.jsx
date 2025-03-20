@@ -10,13 +10,15 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AvailabilityDropdown from "@/components/AvailabilityDropdown";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalEvents, setTotalEvents] = useState(0);
   const [activeTab, setActiveTab] = useState("upcoming"); // Track active tab
-  const { user, setUser, token ,loading } = useAuth();
+  const { user, setUser, token } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: "",
     location: "",
@@ -39,6 +41,7 @@ const EventList = () => {
         setEvents(data.events);
         setTotalPages(data.totalPages);
         setTotalEvents(data.totalEvents);
+        setLoading(false);
         console.log(data);
       } catch (err) {
         console.error(err);
@@ -65,7 +68,7 @@ const EventList = () => {
   };
   console.log(activeTab);
 
-  if (!events || loading) return <p className="text-center">Loading...</p>;
+  if (!events || loading) return <LoadingScreen/>;
   return (
     <div className="mx-auto  bg-white py-6 px-2 md:px-6 z-10">
       <h1 className="text-xl md:text-3xl font-bold text-center mb-8">

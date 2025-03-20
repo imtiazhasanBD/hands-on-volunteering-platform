@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getHelpRequests, addCommentToRequest } from "@/utils/api"; // API Calls
 import { useAuth } from "@/context/AuthContext"; // Authentication Context
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function CommunityHelp() {
   const { user, token } = useAuth();
   const [helpRequests, setHelpRequests] = useState([]);
   const [commentText, setCommentText] = useState({});
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     fetchHelpRequests();
@@ -21,6 +23,7 @@ export default function CommunityHelp() {
     try {
       const data = await getHelpRequests();
       setHelpRequests(data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching requests:", error);
     }
@@ -51,7 +54,7 @@ export default function CommunityHelp() {
     Low: "bg-green-500 text-white",
   };
 
-  if (!helpRequests) return <p className="text-center">Loading...</p>;
+  if (!helpRequests || loading) return <LoadingScreen/>;
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6 bg-white p-2 lg:p-6">

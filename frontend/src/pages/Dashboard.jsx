@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function ProfilePage() {
   const { user, setUser, token, loading } = useAuth();
@@ -63,7 +64,7 @@ export default function ProfilePage() {
     }
   }, []);
 
-  if (!user || loading) return <p className="text-center">Loading...</p>;
+  if (!user || loading || !volunteerHistory) return <LoadingScreen/>;
 
   // Separate upcoming and past activities
   const currentDate = new Date();
