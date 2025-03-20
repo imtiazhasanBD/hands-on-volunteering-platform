@@ -146,7 +146,7 @@ HandsOn is a platform that connects volunteers with meaningful social impact opp
 ## 📌 How to Use  
 1️⃣ **Clone the repository**  
 ```bash
-git clone https://github.com/your-repo/hands-on.git
+git clone https://github.com/imtiazhasanBD/hands-on-volunteering-platform
 cd hands-on
 ```
   
